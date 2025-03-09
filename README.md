@@ -28,7 +28,7 @@ A simple RESTful API for managing notes, built with Node.js, Express, TypeScript
 
   ## API Endpoints
 
-  | **Method** | **Endpoint**            | **Description**                     |
+| **Method** | **Endpoint**            | **Description**                     |
 |------------|-------------------------|-------------------------------------|
 | `GET`      | `/`                     | Home route (health check).          |
 | `GET`      | `/api/v1/notes`         | Fetch all notes.                    |
