@@ -37,5 +37,7 @@ A simple RESTful API for managing notes, built with Node.js, Express, TypeScript
 | `PATCH`    | `/api/v1/notes/:id`     | Update a note by ID.                |
 | `DELETE`   | `/api/v1/notes/:id`     | Delete a note by ID.                |
 
- the create Endpoints test on Postman.
-Image for![postman](https://github.com/user-attachments/assets/524e1329-3654-47cf-a479-43259ea74edf)
+ The create Endpoints test on Postman.
+ ![postNote](https://github.com/user-attachments/assets/5014bb15-ac7b-4f90-897d-798101a43661)
+
+

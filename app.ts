@@ -2,7 +2,7 @@ import express, { Request, Response,RequestHandler } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
-import constants from "../constants";
+import constants from "./constants";
 import database from "./database";
 import controller from "./controller";
 
