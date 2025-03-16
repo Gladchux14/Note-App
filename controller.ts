@@ -1,33 +1,212 @@
-import { Request, Response, NextFunction } from 'express';
-import Note from "./noteModel";
-import constants from "./constants";
-import mongoose from "mongoose";
+import { Request, Response } from "express";
+import { Types } from "mongoose"; 
+import NoteServices from "./service";
+import { INote } from "./noteModel";
+import constants from "./constants"; 
+import { Category } from "./noteModel";
+
+interface TypedRequest<T> extends Request {
+  body: T
+}
+
+interface UpdateNoteRequest {
+  title?: string;
+  content?: string;
+  category?: Types.ObjectId;
+  type?: string;
+}
+
+interface CreateCategoryRequest {
+  name: string;
+  description?: string;
+}
 
 class Controller {
-    async getAllNotes() {
-        return await Note.find({}, "-__v");
-    }
+  // Fetch home
+  async fetch(req: Request, res: Response) {
+    res.status(200).send({ message: constants.MESSAGES.FETCHED, success: true });
+  }
 
-    async addNote(data: any) {
-        return await Note.create(data);
+  // Fetch all notes
+  async fetchMany(req: Request, res: Response) {
+    try {
+      const notes = await NoteServices.getAllNotes();
+      res.status(200).send({
+        message: constants.MESSAGES.FETCHED,
+        success: true,
+        data: notes,
+      });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false,
+      });
     }
+  }
 
-    async getNoteById(id: string) {
-        return await Note.findOne({ _id: id });
+  // Create note
+  async create(req: Request, res: Response) {
+    try {
+      const data = await NoteServices.addNote(req.body);
+      res.status(201).send({
+        message: constants.MESSAGES.CREATED,
+        success: true,
+        data,
+      });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false,
+      });
     }
+  }
 
-    async editNoteById(id: string, data: any) {
-        return await Note.findOneAndUpdate(
-            { _id: id }, 
-            data, 
-            { new: true, runValidators: true }
-        );
+  // Get a note by ID
+  async fetchOne(req: Request, res: Response):Promise <void>{
+    try {
+      const { id } = req.params;
+      const data = await NoteServices.getNoteById(id);
+      if (!data) {
+         res
+          .status(404)
+          .send({ message: "Note not found", success: false });
+      return
     }
+      res.status(200).send({
+        message: constants.MESSAGES.FETCHED,
+        success: true,
+        data,
+       });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false,
+      });
+    }
+  }
 
-    async deleteNoteById(id:string) {
-       
-        return await Note.findOneAndDelete({ _id: id });
+  // Edit note
+  async update(req: Request, res: Response):Promise<void>{
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const data = await NoteServices.editNoteById(id, body);
+      if (!data) {
+       res
+          .status(404)
+          .send({ message: "Note not found", success: false });
+          return
+        }
+      res.status(200).send({
+        message: constants.MESSAGES.UPDATED,
+        success: true,
+        data,
+      });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false,
+      });
     }
+  }
+
+  // Delete a note
+  async delete(req: Request, res: Response) :Promise<void>{
+    try {
+      const { id } = req.params;
+      const data = await NoteServices.deleteNoteById(id);
+      if (!data) {
+       res
+          .status(404)
+          .send({ message: "Note not found", success: false });
+          return
+        }
+      res.status(200).send({
+        message: constants.MESSAGES.DELETED,
+        success: true,
+        data,
+      });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false,
+      });
+    }
+  }
+
+  // Get notes by category
+  async getNotesByCategory(req: Request, res: Response): Promise<void> {
+    try {
+      const { categoryId } = req.params;
+      const notes = await NoteServices.getNotesByCategory(categoryId);
+      
+      if (!notes || notes.length === 0) {
+        res.status(404).send({
+          message: "No notes found for this category",
+          success: false
+        });
+        return;
+      }
+
+      res.status(200).send({
+        message: constants.MESSAGES.FETCHED,
+        success: true,
+        data: notes
+      });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false
+      });
+    }
+  }
+
+  // Update note (PUT method)
+  async updateNote(req: TypedRequest<UpdateNoteRequest>, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const updateData: Partial<INote> = req.body;
+      
+      const updatedNote = await NoteServices.updateNote(id, updateData);
+      
+      if (!updatedNote) {
+        res.status(404).send({
+          message: constants.MESSAGES.NOT_FOUND,
+          success: false
+        });
+        return;
+      }
+
+      res.status(200).send({
+        message: constants.MESSAGES.UPDATED,
+        success: true,
+        data: updatedNote
+      });
+    } catch (err: any) {
+      res.status(500).send({
+        message: err.message || constants.MESSAGES.ERROR,
+        success: false
+      });
+    }
+  }
+
+  // Create category
+  async createCategory(req: Request<{}, {}, CreateCategoryRequest>, res: Response) {
+    try {
+      const { name, description } = req.body;
+      const category = await Category.create({ name, description });
+      res.status(201).json({
+        success: true,
+        message: "Category created successfully",
+        data: category
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: error.message || "Error creating category"
+      });
+    }
+  }
 }
 
 export default new Controller();
