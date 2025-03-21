@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
-import { INote } from "../noteModel";
+import { INote } from "../models/noteModel";
 
 export function validateNote(
   req: Request ,

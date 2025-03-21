@@ -1,41 +1,8 @@
 import {model, Schema, Document,Types }  from "mongoose";
-import constants from "./constants";
-// import { NOTE_TYPES, DATABASES} from constants;
+import constants from "../constants";
+import { ICategory } from "../interfaces/category.interface";
+import { INote } from "../interfaces/note.interface";
 
-
-export interface ICategory extends Document{
-    name:string,
-    description?: string,
-    createdAt: Date,
-    updatedAt:Date,
-}
-
-const CategorySchema = new Schema<ICategory>({
-    name:{
-        type:String,
-        required:true,
-        unique: true,
-    },
-    description:{
-        type:String,
-        required:false
-    }
-},
-{
-    timestamps: true,
-},
-)
-
-export const Category = model<ICategory>('Category', CategorySchema);
-
-export interface INote extends Document {
-     title: String;
-     content: String;
-     type: String;
-     category: Types.ObjectId | ICategory;
-     createdAt: Date;
-     updatedAt: Date;
-}
 
 const NoteSchema = new Schema <INote> (
     {

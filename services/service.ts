@@ -1,4 +1,5 @@
-import Note, {INote} from "./noteModel";
+import { INote } from "../interfaces/note.interface";
+import Note from "../models/noteModel";
 
 class NoteServices {
     async getAllNotes() {

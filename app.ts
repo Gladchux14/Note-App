@@ -5,7 +5,6 @@ import database from "./database";
 import express from "express";
 import mongoose from "mongoose";
 import { loggingMiddleware } from "./middleware/logging.Middleware";
-// const noteRouter = require('./route/note.route');
 import noteRouter from './route/note.route';
 
 const app = express();
@@ -17,20 +16,6 @@ app.use(loggingMiddleware);
 app.use("/api/v1",noteRouter);
 
 const PORT = process.env.PORT || 5000;
-
-
-// mongoose.connect("mongodb://localhost:27017/notes", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// } as any).then(() => {
-//   console.log("Connected to MongoDB");
-// }).catch((err) => {
-//   console.error("MongoDB connection error:", err);
-// });
-
-// app.use(noteRouter);
-// app.listen(3000, () => console.log("Server running on port 3000"));
-
 
 // Start server
 const startServer = () => {

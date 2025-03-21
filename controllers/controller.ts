@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose"; 
-import NoteServices from "./service";
-import { INote } from "./noteModel";
-import constants from "./constants"; 
-import { Category } from "./noteModel";
+import NoteServices from "../services/service";
+import { INote } from "../models/noteModel";
+import constants from "../constants"; 
+import { Category } from "../models/noteModel";
 
 interface TypedRequest<T> extends Request {
   body: T
